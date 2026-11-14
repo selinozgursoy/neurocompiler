@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroGraph-HW Studio</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>NeuroGraph-HW Studio</h1>
+    <p class="sub">Compile a geometric neural circuit, see where each node runs, and compare a heterogeneous mapping with a GPU-only baseline.</p>
+  </div>
+  <nav>
+    <a href="https://github.com/selinozgursoy/neurocompiler">Code</a>
+    <a href="/docs">API</a>
+  </nav>
+</header>
+
+<p class="notice" role="note"><strong>Simulated.</strong> Functional behaviour is computed. Energy and latency are cost-model estimates from editable hardware constants, not measurements.</p>
+
+<main class="grid">
+  <section class="panel" aria-labelledby="h-src">
+    <h2 id="h-src">Workload</h2>
+    <label for="preset">Preset</label>
+    <select id="preset"></select>
+    <p class="hint" id="preset-summary"></p>
+
+    <div class="tabs" role="tablist" aria-label="Editor format">
+      <button role="tab" id="tab-ir" aria-selected="true" aria-controls="editor">IR text</button>
+      <button role="tab" id="tab-json" aria-selected="false" aria-controls="editor" tabindex="-1">Graph JSON</button>
+    </div>
+    <label for="editor" class="sr">Workload source</label>
+    <textarea id="editor" spellcheck="false" rows="14"></textarea>
+
+    <div class="row">
+      <div><label for="steps">Steps (1 ms each)</label><input id="steps" type="number" min="10" max="5000" value="400"></div>
+      <div><label for="sync">Sync every (steps)</label><input id="sync" type="number" min="1" max="5000" value="64"></div>
+    </div>
+    <label class="check"><input id="fusion" type="checkbox" checked> Run the fusion pass</label>
+
+    <details>
+      <summary>Hardware constants (JSON overrides)</summary>
+      <label for="hw" class="sr">Hardware overrides</label>
+      <textarea id="hw" spellcheck="false" rows="5" placeholder='{"pim": {"read_noise": 0.005}, "tensor": {"e_mac_pj": 2.56}}'></textarea>
+      <p class="hint">Defaults and their sources: <a href="/api/hardware">/api/hardware</a></p>
+    </details>
+
+    <div class="actions">
+      <button id="run" class="primary">Compile and simulate</button>
+      <button id="share">Copy share link</button>
+    </div>
+    <div class="actions">
+      <button id="dl-ir" disabled>Download IR</button>
+      <button id="dl-map" disabled>Download mapping</button>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="results">
+    <div class="card">
+      <h2>Compiled graph</h2>
+      <div class="legend" id="dag-legend"></div>
+      <div class="scroll"><svg id="dag" role="img" aria-label="Compiled graph, nodes colored by hardware target"></svg></div>
+      <p class="hint" id="compile-summary"></p>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="card">
+      <h2>Heterogeneous mapping against the GPU-only baseline</h2>
+      <div class="legend"><span><i class="box" style="background:var(--ink)"></i>NeuroGraph-HW heterogeneous</span><span><i class="box" style="background:var(--base)"></i>Homogeneous GPU baseline</span></div>
+      <div class="four">
+        <figure><figcaption>Energy over the run (mJ)</figcaption><div id="c-energy"></div></figure>
+        <figure><figcaption>Latency per step (ms)</figcaption><div id="c-latency"></div></figure>
+        <figure><figcaption>Interconnect traffic (bytes per step)</figcaption><div id="c-traffic"></div></figure>
+        <figure><figcaption id="stab-cap">Stability</figcaption><div id="c-stab"></div></figure>
+      </div>
+      <p class="hint">Traffic is mesh bytes for the heterogeneous mapping and weight bytes moved between memory and compute for the baseline.</p>
+    </div>
+
+    <div class="card">
+      <h2>Over time</h2>
+      <div class="two">
+        <figure><figcaption>Energy per step (µJ)</figcaption><div id="c-ts-energy"></div></figure>
+        <figure><figcaption id="ts2-cap">Synchronization drift</figcaption><div id="c-ts-drift"></div></figure>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Where the heterogeneous energy goes</h2>
+      <div id="breakdown"></div>
+      <div class="scroll"><table id="node-table"></table></div>
+    </div>
+
+    <div class="card">
+      <h2>Compiled IR</h2>
+      <pre id="ir-out"></pre>
+    </div>
+  </section>
+</main>
+<div id="tip" class="tip" hidden></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

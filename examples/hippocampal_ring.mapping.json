@@ -1,0 +1,138 @@
+{
+  "module": "hippocampal_continuous_attractor_ring",
+  "nodes": {
+    "velocity": {
+      "target": "NeuromorphicCore",
+      "plasticity": "none",
+      "units": 1,
+      "slots": [
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    "ring": {
+      "target": "NeuromorphicCore",
+      "plasticity": "local_stdp",
+      "units": 1,
+      "slots": [
+        [
+          2,
+          0
+        ]
+      ]
+    },
+    "heading": {
+      "target": "TensorAccelerator",
+      "plasticity": "none",
+      "units": 0,
+      "slots": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "wrap": {
+      "target": "TensorAccelerator",
+      "plasticity": "none",
+      "units": 0,
+      "slots": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    "path": {
+      "target": "PIMCrossbar",
+      "plasticity": "none",
+      "units": 1,
+      "slots": [
+        [
+          3,
+          0
+        ]
+      ]
+    },
+    "place": {
+      "target": "TensorAccelerator",
+      "plasticity": "global_sync",
+      "units": 0,
+      "slots": [
+        [
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  "noc": {
+    "mesh": [
+      16,
+      12
+    ],
+    "bridge": [
+      0,
+      0
+    ]
+  },
+  "usage": {
+    "NeuromorphicCore": 2,
+    "PIMCrossbar": 1,
+    "TensorAccelerator": 0
+  },
+  "capacity": {
+    "NeuromorphicCore": 128,
+    "PIMCrossbar": 64
+  },
+  "by_target": {
+    "NeuromorphicCore": [
+      "velocity",
+      "ring"
+    ],
+    "PIMCrossbar": [
+      "path"
+    ],
+    "TensorAccelerator": [
+      "heading",
+      "wrap",
+      "place"
+    ]
+  },
+  "plasticity": {
+    "none": [
+      "velocity",
+      "heading",
+      "wrap",
+      "path"
+    ],
+    "local_stdp": [
+      "ring"
+    ],
+    "global_sync": [
+      "place"
+    ]
+  },
+  "cut_edges": [
+    {
+      "src": "ring",
+      "dst": "heading",
+      "kind": "spikes",
+      "feedback": false
+    },
+    {
+      "src": "wrap",
+      "dst": "path",
+      "kind": "tensor",
+      "feedback": false
+    },
+    {
+      "src": "path",
+      "dst": "place",
+      "kind": "tensor",
+      "feedback": false
+    }
+  ]
+}
