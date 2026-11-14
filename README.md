@@ -1,15 +1,4 @@
----
-title: NeuroGraph-HW
-emoji: 🧭
-colorFrom: blue
-colorTo: gray
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
----
-
-# NeuroGraph-HW
+# Neurocompiler
 
 A compiler and runtime simulator that maps geometric neural circuits onto heterogeneous hardware.
 
